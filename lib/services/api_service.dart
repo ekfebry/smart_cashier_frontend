@@ -36,8 +36,14 @@ class ApiService {
   Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/login'),
-      headers: await getHeaders(),
-      body: jsonEncode({'email': email, 'password': password}),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+      },
+      body: {
+        'email': email,
+        'password': password,
+      },
     );
 
     if (response.statusCode == 200) {
@@ -45,21 +51,24 @@ class ApiService {
       await setToken(data['token']);
       return data;
     } else {
-      throw Exception('Login failed');
+      throw Exception('Login failed: ${response.body}');
     }
   }
 
   Future<Map<String, dynamic>> register(String name, String email, String password, String role) async {
     final response = await http.post(
       Uri.parse('$baseUrl/register'),
-      headers: await getHeaders(),
-      body: jsonEncode({
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+      },
+      body: {
         'name': name,
         'email': email,
         'password': password,
         'password_confirmation': password,
         'role': role,
-      }),
+      },
     );
 
     if (response.statusCode == 201) {
@@ -67,7 +76,7 @@ class ApiService {
       await setToken(data['token']);
       return data;
     } else {
-      throw Exception('Registration failed');
+      throw Exception('Registration failed: ${response.body}');
     }
   }
 
