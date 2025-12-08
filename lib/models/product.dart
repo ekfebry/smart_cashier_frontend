@@ -5,7 +5,11 @@ class Product {
   final double price;
   final String? category;
   final String? imagePath;
-  final int quantity;
+  final int stockQuantity;
+  final int? minStockLevel;
+
+  // Backward compatibility getter
+  int get quantity => stockQuantity;
 
   Product({
     required this.id,
@@ -14,18 +18,20 @@ class Product {
     required this.price,
     this.category,
     this.imagePath,
-    required this.quantity,
+    required this.stockQuantity,
+    this.minStockLevel,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id'],
-      name: json['name'],
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
       description: json['description'],
-      price: double.parse(json['price'].toString()),
+      price: json['price'] != null ? double.parse(json['price'].toString()) : 0.0,
       category: json['category'],
       imagePath: json['image_path'],
-      quantity: json['quantity'],
+      stockQuantity: json['stock_quantity'] ?? 0,
+      minStockLevel: json['min_stock_level'],
     );
   }
 
@@ -37,7 +43,8 @@ class Product {
       'price': price,
       'category': category,
       'image_path': imagePath,
-      'quantity': quantity,
+      'stock_quantity': stockQuantity,
+      'min_stock_level': minStockLevel,
     };
   }
 }

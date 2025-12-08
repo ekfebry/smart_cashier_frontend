@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
-import 'product_list_screen.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         Provider.of<AuthProvider>(context, listen: false).setToken(result['token']);
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const ProductListScreen(),
+            pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
@@ -127,12 +127,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
+                              color: Colors.black.withValues(alpha: 0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
                             BoxShadow(
-                              color: const Color(0xFF6B46C1).withOpacity(0.2),
+                              color: const Color(0xFF6B46C1).withValues(alpha: 0.2),
                               blurRadius: 30,
                               offset: const Offset(0, 15),
                             ),
@@ -172,12 +172,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
+                              color: Colors.black.withValues(alpha: 0.15),
                               blurRadius: 25,
                               offset: const Offset(0, 15),
                             ),
                             BoxShadow(
-                              color: const Color(0xFF6B46C1).withOpacity(0.1),
+                              color: const Color(0xFF6B46C1).withValues(alpha: 0.1),
                               blurRadius: 40,
                               offset: const Offset(0, 20),
                             ),
@@ -324,7 +324,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     elevation: 8,
-                                    shadowColor: const Color(0xFF6B46C1).withOpacity(0.3),
+                                    shadowColor: const Color(0xFF6B46C1).withValues(alpha: 0.3),
                                     disabledBackgroundColor: Colors.grey.shade400,
                                   ),
                                   child: _isLoading
@@ -387,7 +387,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       Text(
                         '© 2024 Smart Cashier',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                           fontSize: 11,
                           fontWeight: FontWeight.w400,
                         ),

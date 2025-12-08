@@ -22,11 +22,11 @@ class Order {
 
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
-      id: json['id'],
-      userId: json['user_id'],
-      totalAmount: double.parse(json['total_amount'].toString()),
-      status: json['status'],
-      createdAt: DateTime.parse(json['created_at']),
+      id: json['id'] ?? 0,
+      userId: json['user_id'] ?? 0,
+      totalAmount: json['total_amount'] != null ? double.parse(json['total_amount'].toString()) : 0.0,
+      status: json['status'] ?? 'pending',
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
       user: json['user'] != null ? User.fromJson(json['user']) : null,
       orderItems: json['order_items'] != null
           ? (json['order_items'] as List).map((item) => OrderItem.fromJson(item)).toList()
