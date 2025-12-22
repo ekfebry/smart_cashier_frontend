@@ -75,24 +75,58 @@ class ApiService {
 
   // Auth
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/login'),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
-      },
-      body: {
-        'email': email,
-        'password': password,
-      },
-    );
+    // Temporary mock for testing without backend
+    if (email == 'test@test.com' && password == '123456') {
+      debugPrint('Mock login successful for test credentials');
+      final mockData = {'token': 'mock_token_123', 'user': {'id': 1, 'name': 'Test User', 'email': email}};
+      await setToken(mockData['token'] as String);
+      return mockData;
+    }
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      await setToken(data['token']);
-      return data;
-    } else {
-      throw Exception('Login failed: ${response.body}');
+    try {
+      debugPrint('Attempting login to: $baseUrl/login with email: $email');
+      final response = await http.post(
+        Uri.parse('$baseUrl/login'),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: {
+          'email': email,
+          'password': password,
+        },
+      );
+
+      debugPrint('Login response status: ${response.statusCode}');
+      debugPrint('Login response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data.containsKey('token')) {
+          await setToken(data['token']);
+          return data;
+        } else {
+          throw Exception('Login failed: Token not found in response');
+        }
+      } else {
+        // Try to parse error response
+        try {
+          final errorData = jsonDecode(response.body);
+          final errorMessage = errorData['message'] ?? errorData['error'] ?? 'Unknown error';
+          throw Exception('Login failed: $errorMessage');
+        } catch (_) {
+          throw Exception('Login failed: ${response.statusCode} - ${response.body}');
+        }
+      }
+    } on http.ClientException catch (e) {
+      debugPrint('ClientException: $e');
+      throw Exception('Network error: Unable to connect to server. Check if backend is running at $baseUrl');
+    } on FormatException catch (e) {
+      debugPrint('FormatException: $e');
+      throw Exception('Response format error: Invalid JSON response from server');
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+      throw Exception('Login failed: $e');
     }
   }
 
