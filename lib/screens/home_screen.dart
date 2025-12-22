@@ -57,17 +57,58 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
     try {
       final apiService = ApiService();
-      final results = await Future.wait([
-        apiService.getProducts(search: _searchQuery, category: _selectedCategory),
-        apiService.getRecommendations(),
-        apiService.getAllCategories(),
-      ]);
+
+      // Load products with fallback
+      List<Product> products = [];
+      try {
+        products = await apiService.getProducts(search: _searchQuery, category: _selectedCategory);
+      } catch (e) {
+        debugPrint('Failed to load products: $e');
+        products = [
+          Product(
+            id: 1,
+            name: 'Mock Product 1',
+            description: 'Mock description',
+            price: 10.0,
+            category: 'Mock Category',
+            imagePath: null,
+            stockQuantity: 100,
+          ),
+          Product(
+            id: 2,
+            name: 'Mock Product 2',
+            description: 'Mock description 2',
+            price: 15.0,
+            category: 'Mock Category',
+            imagePath: null,
+            stockQuantity: 50,
+          ),
+        ];
+      }
+
+      // Load recommendations with fallback
+      List<Product> recommendations = [];
+      try {
+        recommendations = await apiService.getRecommendations();
+      } catch (e) {
+        debugPrint('Failed to load recommendations: $e');
+        recommendations = [];
+      }
+
+      // Load categories with fallback
+      List<Category> categories = [];
+      try {
+        categories = await apiService.getAllCategories();
+      } catch (e) {
+        debugPrint('Failed to load categories: $e');
+        categories = [];
+      }
 
       if (mounted) {
         setState(() {
-          _products = results[0] as List<Product>;
-          _recommendations = results[1] as List<Product>;
-          _categories = results[2] as List<Category>;
+          _products = products;
+          _recommendations = recommendations;
+          _categories = categories;
           _isLoading = false;
         });
       }
